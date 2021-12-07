@@ -2,6 +2,8 @@ require('dotenv').config()
 const axios = require('axios');
 const { Telegraf } = require('telegraf')
 const express = require('express');
+const Discord = require('discord.js')
+const discordBot = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES] });
 
 const app = express();
 app.get('/', (request, response) => {
@@ -26,6 +28,7 @@ async function sendDiscordWebhookMessage(messageText) {
     })
 }
 
+// Telegram
 var teleBotToken = process.env.TELEGRAM_BOT_TOKEN
 const telegramBot = new Telegraf(teleBotToken)
 
@@ -45,10 +48,30 @@ telegramBot.on('message', ctx => {
 
         sendDiscordWebhookMessage(discordMessage)
         .then(() => {
-            console.log(`Message from ${messageAuthorName} streamed.`)
+            console.log(`Message from ${messageAuthorName} streamed. <T/D>`)
         })
     }
 })
 
+// Discord
+discordBot.on('ready', () => {
+    console.log('Discord bot is online and ready!')
+    console.log('')
+})
+
+discordBot.on('messageCreate', (msg) => {
+    if (msg.channel.id != '917684042797817887' && msg.channel.id != '917660123198029875') return
+    if (msg.author.bot) return
+    var messageText = msg.content
+    var authorName = msg.guild.members.cache.get(msg.author.id).nickname
+    
+    telegramBot.telegram.sendMessage(process.env.TELEGRAM_CHAT_ID, `From ${authorName}: ${messageText}`)
+    .then(msg => {
+        console.log(`Message from ${authorName} streamed. <D/T>`)
+    })
+})
+
 telegramBot.launch()
 console.log('Bot is online and ready to stream!')
+
+discordBot.login(process.env.DISCORD_BOT_TOKEN)
