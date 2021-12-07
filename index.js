@@ -33,6 +33,7 @@ var teleBotToken = process.env.TELEGRAM_BOT_TOKEN
 const telegramBot = new Telegraf(teleBotToken)
 
 telegramBot.start((ctx) => {
+    console.log(ctx.chat.id)
     ctx.reply('Hey there! I am Streamer! I am currently streaming messages from this chat.')
 })
 
