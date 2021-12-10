@@ -68,9 +68,9 @@ discordBot.on('messageCreate', (msg) => {
     telegramBot.telegram.sendMessage(process.env.TELEGRAM_CHAT_ID, `From ${authorName}: ${messageText}`)
     .then(message => {
         if (msg.attachments.size > 0) {
+            telegramBot.telegram.sendMessage(process.env.TELEGRAM_CHAT_ID, 'Attachments:')
             try {
                 msg.attachments.forEach(attachment => {
-                    console.log(attachment.contentType)
                     if (attachment.contentType.startsWith('video')) {
                         telegramBot.telegram.sendVideo(process.env.TELEGRAM_CHAT_ID, attachment.attachment)
                     } else if (attachment.contentType.startsWith('image')) {
